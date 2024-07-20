@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <title>Notepad v0.4.1</title>
+  <style type="text/css">
+    .fontset {font-family: 'Menlo', 'MS Gothic', 'M PLUS 1 Code', monospace;}
+    #textarea { width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="fontset">
+    <span id="for">
+      Open File:<input type="file" class="fontset" id="roader"><br>
+    </span>
+    <textarea cols="100" rows="20" wrap="off" class="fontset" style="font-size: medium;" id="textarea"></textarea><br>
+    Text Length: <span id="disp"></span> |<label>Show settings<input type="checkbox" id="sset"></label><br>
+    <button type="button" class="fontset" id="sa"> Select all </button>
+    <button type="button" class="fontset" id="cp"> Copy all </button>
+    <button type="button" class="fontset" id="cl"> Clear </button><br>
+    <span id="fdr">
+      New File Name:<input type="text" size="24" value="text.txt" title="FileName" class="fontset" id="filename"><br>
+      New Mime Type:<input type="text" size="24" value="text/plain" title="MimeType" class="fontset" id="mimetype"><br>
+      <button type="button" class="fontset" id="button"> Save </button>
+    </span>
+    <span id="seti" style="display: none;"><br><br><br>
+      ### Settings ###<br>
+      --- Text counter ---<br>
+      <label>Do not include half-width space<input type="checkbox" id="nohs"></label><br>
+      <label>Do not include full-width space<input type="checkbox" id="nofs"></label><br>
+      --- Textarea customize ---<br>
+      rows: <input type="number" size="24" step="1" min="1" value="20" title="Enter rows." class="fontset" id="rows"><br>
+      Font size: <input type="text" size="24" value="medium" title="Enter font-size according to CSS." class="fontset" id="fsize"><br>
+      --- Behavior ---<br>
+      <label>Show file opener and downloader<input type="checkbox" id="fv" checked></label><br><br>
+      <button type="button" class="fontset" id="rs"> Reset all settings </button>
+    </span>
+  </div>
+  <script type="text/javascript">
+    function dgEBI(id){return document.getElementById(id);};
+    var froader = dgEBI('roader');
+    var tarea = dgEBI('textarea');
+    var fname = dgEBI('filename');
+    var fmime = dgEBI('mimetype');
+    var savebtn = dgEBI('button');
+    var dla = document.createElement('a');
+    var dissp = dgEBI('disp');
+    var hs = dgEBI('nohs');
+    var fs = dgEBI('nofs');
+    var sset = dgEBI('sset');
+    var rows = dgEBI('rows');
+    var fsize = dgEBI('fsize');
+    var seti = dgEBI('seti');
+    var fReader = new FileReader();
+    var saveblob, tlen;
+    var objURL = new Object();
+    objURL.uri = undefined;
+    objURL.existence = false;
+    fReader.onload = function () { 
+      tarea.value = fReader.result;
+      count();
+    };
+    froader.addEventListener('change', function () {
+      if (froader.files.length != 0) {
+        fReader.readAsText(froader.files[0]);
+        fname.value = froader.files[0].name;
+        fmime.value = froader.files[0].type;
+      }
+    });
+    savebtn.addEventListener('click', function () {
+      saveblob = new Blob([ tarea.value ], { 'type' : fmime.value, 'name' : fname.value });
+      dla.setAttribute('download', fname.value);
+      dla.setAttribute('target', '_blank');
+      if (objURL.existence == true) { window.URL.revokeObjectURL(objURL.uri); }
+      if (objURL.existence == false) { objURL.existence = true; }
+      objURL.uri = window.URL.createObjectURL(saveblob);
+      dla.setAttribute('href', objURL.uri);
+      dla.click();
+      dla = document.createElement('a');
+      URL.revokeObjectURL(objURL.uri);
+    });
+    sset.addEventListener('change', function () {
+      if (sset.checked) {
+        seti.removeAttribute('style');
+      } else if (sset.checked == false) {
+        seti.setAttribute('style','display: none;');
+      }
+    });
+    function rowsf() { if (rows.value.match(/^\d{1,}$/)){ tarea.rows = rows.value; } };
+    rows.addEventListener('input', rowsf);
+    function fsizef() {
+      if (fsize.value.match(/^\d+px$|^\d+rem$|^\d+em$|^\d+vw$|^\d+%$|^\d+ex$|^x{1,2}-small$|^small$|^medium$|^large$|^x{1,3}-large$|^smaller$|^larger$/)){
+        tarea.style = 'font-size: ' + fsize.value + ';';
+      } else if (fsize.value.match(/^\d+$/)){
+        tarea.style = 'font-size: ' + fsize.value + 'px;';
+      }
+    }
+    fsize.addEventListener('input', fsizef);
+    function fvf() {
+      if (fv.checked) {
+        dgEBI('fdr').removeAttribute('style');
+        dgEBI('for').removeAttribute('style');
+      } else if (fv.checked == false) {
+        dgEBI('fdr').setAttribute('style', 'display: none;');
+        dgEBI('for').setAttribute('style', 'display: none;');
+      }
+    }
+    fv.addEventListener('change', fvf);
+    function count() {
+      tlen = textarea.value.replace(/\n/g, '');
+      if (hs.checked) { tlen = tlen.replace(/ /g, ''); }
+      if (fs.checked) { tlen = tlen.replace(/　/g, ''); }
+      disp.innerText = tlen.length;
+    };
+    rs.addEventListener('click', function () {
+      nohs.checked = false;
+      nofs.checked = false;
+      count();
+      rows.value = '20';
+      rowsf();
+      fsize.value = 'medium';
+      fsizef();
+      fv.checked = true;
+      fvf();
+    })
+    sa.addEventListener('click', function () {
+      tarea.focus();
+      tarea.select();
+    });
+    cp.addEventListener('click', function () {
+      tarea.focus();
+      tarea.select();
+      if (document.execCommand('Copy')) {
+        document.execCommand('Copy');
+      } else if (navigator.clipboard.writeText(tarea.value)) {
+        navigator.clipboard.writeText(tarea.value);
+      }
+    });
+    cl.addEventListener('click', function () {
+      tarea.value = '';
+      count();
+    });
+    count();
+    textarea.addEventListener('input', count, false);
+    textarea.addEventListener('click', count, false);
+    hs.addEventListener('change', count, false);
+    fs.addEventListener('change', count, false);
+  </script>
+</body>
