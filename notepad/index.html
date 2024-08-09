@@ -1,12 +1,19 @@
 <!DOCTYPE html>
+
 <head>
   <meta charset="UTF-8">
-  <title>Notepad v0.4.1</title>
+  <title>Notepad v1.1.0</title>
   <style type="text/css">
-    .fontset {font-family: 'Menlo', 'MS Gothic', 'M PLUS 1 Code', monospace;}
-    #textarea { width: 99%; }
+    .fontset {
+      font-family: 'MS Gothic', 'M PLUS 1 Code', 'Menlo', monospace;
+    }
+
+    #textarea {
+      width: 100%;
+    }
   </style>
 </head>
+
 <body>
   <div class="fontset">
     <span id="for">
@@ -25,18 +32,22 @@
     <span id="seti" style="display: none;"><br><br><br>
       ### Settings ###<br>
       --- Text counter ---<br>
-      <label>Do not include half-width space<input type="checkbox" id="nohs"></label><br>
-      <label>Do not include full-width space<input type="checkbox" id="nofs"></label><br>
+      <label>Do not include half space<input type="checkbox" id="nohs"></label><br>
+      <label>Do not include full space<input type="checkbox" id="nofs"></label><br>
       --- Textarea customize ---<br>
       rows: <input type="number" size="24" step="1" min="1" value="20" title="Enter rows." class="fontset" id="rows"><br>
-      Font size: <input type="text" size="24" value="medium" title="Enter font-size according to CSS." class="fontset" id="fsize"><br>
+      Font size: <input type="text" size="24" value="medium" title="Enter font-size according to format of CSS." class="fontset" id="fsize"><br>
+      Font family: <input type="text" size="45" class="fontset" id="ffamily" title="Enter font-size according to format of CSS." placeholder="'MS Gothic', 'M PLUS 1 Code', 'Menlo', monospace"><br>
+      Enable wrap: <input type="checkbox" id="wrape"><br>
       --- Behavior ---<br>
-      <label>Show file opener and downloader<input type="checkbox" id="fv" checked></label><br><br>
+      <label>Show file opener and downloader<input type="checkbox" id="fv" checked></label><br>
+      <button type="button" class="fontset" id="genur"> Generate URI with settings </button><br>
+      URI:<span id="query"></span><br><br>
       <button type="button" class="fontset" id="rs"> Reset all settings </button>
     </span>
   </div>
   <script type="text/javascript">
-    function dgEBI(id){return document.getElementById(id);};
+    function dgEBI(id) { return document.getElementById(id); };
     var froader = dgEBI('roader');
     var tarea = dgEBI('textarea');
     var fname = dgEBI('filename');
@@ -50,15 +61,26 @@
     var rows = dgEBI('rows');
     var fsize = dgEBI('fsize');
     var seti = dgEBI('seti');
+    var ffamily = dgEBI('ffamily');
+    var wrape = dgEBI('wrape');
     var fReader = new FileReader();
     var saveblob, tlen;
     var objURL = new Object();
     objURL.uri = undefined;
     objURL.existence = false;
-    fReader.onload = function () { 
+    fReader.onload = function () {
       tarea.value = fReader.result;
       count();
     };
+    function getParam(name, url) {
+      if (!url) var url = window.location.href;
+      var name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+      var results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
     froader.addEventListener('change', function () {
       if (froader.files.length != 0) {
         fReader.readAsText(froader.files[0]);
@@ -67,7 +89,7 @@
       }
     });
     savebtn.addEventListener('click', function () {
-      saveblob = new Blob([ tarea.value ], { 'type' : fmime.value, 'name' : fname.value });
+      saveblob = new Blob([tarea.value], { 'type': fmime.value, 'name': fname.value });
       dla.setAttribute('download', fname.value);
       dla.setAttribute('target', '_blank');
       if (objURL.existence == true) { window.URL.revokeObjectURL(objURL.uri); }
@@ -82,15 +104,15 @@
       if (sset.checked) {
         seti.removeAttribute('style');
       } else if (sset.checked == false) {
-        seti.setAttribute('style','display: none;');
+        seti.setAttribute('style', 'display: none;');
       }
     });
-    function rowsf() { if (rows.value.match(/^\d{1,}$/)){ tarea.rows = rows.value; } };
+    function rowsf() { if (rows.value.match(/^\d{1,}$/)) { tarea.rows = rows.value; } };
     rows.addEventListener('input', rowsf);
     function fsizef() {
-      if (fsize.value.match(/^\d+px$|^\d+rem$|^\d+em$|^\d+vw$|^\d+%$|^\d+ex$|^x{1,2}-small$|^small$|^medium$|^large$|^x{1,3}-large$|^smaller$|^larger$/)){
+      if (fsize.value.match(/^\d+px$|^\d+rem$|^\d+em$|^\d+vw$|^\d+%$|^\d+ex$|^x{1,2}-small$|^small$|^medium$|^large$|^x{1,3}-large$|^smaller$|^larger$/)) {
         tarea.style = 'font-size: ' + fsize.value + ';';
-      } else if (fsize.value.match(/^\d+$/)){
+      } else if (fsize.value.match(/^\d+$/)) {
         tarea.style = 'font-size: ' + fsize.value + 'px;';
       }
     }
@@ -105,12 +127,34 @@
       }
     }
     fv.addEventListener('change', fvf);
+    function fff() { tarea.style.fontFamily = ffamily.value }
+    ffamily.addEventListener('input', fff);
+    function wrapef() {
+      if (wrape.checked == true) {
+        tarea.wrap = 'soft';
+      } else {
+        tarea.wrap = 'off';
+      }
+    }
+    wrape.addEventListener('change', wrapef)
     function count() {
       tlen = textarea.value.replace(/\n/g, '');
       if (hs.checked) { tlen = tlen.replace(/ /g, ''); }
       if (fs.checked) { tlen = tlen.replace(/　/g, ''); }
       disp.innerText = tlen.length;
     };
+    function queryGen() {
+      var alls = [];
+      if (hs.checked == true) alls.push('nohs=1');
+      if (fs.checked == true) alls.push('nofs=1');
+      if (rows.value != '20') alls.push('rows=' + rows.value);
+      if (fsize.value != 'medium') alls.push('fsize=' + fsize.value);
+      if (fv.checked == false) alls.push('sfutl=0');
+      if (ffamily.value != '') alls.push('ff=' + ffamily.value);
+      if (wrape.checked == true) alls.push('wrap=1');
+      if (alls.length != 0) dgEBI('query').innerHTML = window.location.href + '?' + alls.join('&');
+    }
+    dgEBI('genur').addEventListener('click', queryGen);
     rs.addEventListener('click', function () {
       nohs.checked = false;
       nofs.checked = false;
@@ -121,6 +165,10 @@
       fsizef();
       fv.checked = true;
       fvf();
+      wrape.checked = false;
+      wrapef();
+      ffamily.value = '';
+      fff();
     })
     sa.addEventListener('click', function () {
       tarea.focus();
@@ -139,6 +187,37 @@
       tarea.value = '';
       count();
     });
+    {
+      var nihs = getParam('nohs');
+      if (nihs == '1') hs.checked = true;
+      var nifs = getParam('nofs');
+      if (nifs == '1') fs.checked = true;
+      var grs = getParam('rows');
+      if (/^\d+$/.test(grs) == true) {
+        rows.value = grs;
+        rowsf();
+      }
+      var fsize0 = getParam('fsize');
+      if (/^\d+px$|^\d+rem$|^\d+em$|^\d+vw$|^\d+%$|^\d+ex$|^x{1,2}-small$|^small$|^medium$|^large$|^x{1,3}-large$|^smaller$|^larger$/.test(fsize0) == true) {
+        fsize.value = fsize0;
+        fsizef();
+      }
+      var sFutl = getParam('sfutl');
+      if (sFutl == '1') {
+        fv.checked = true;
+        fvf();
+      }
+      var ff = getParam('ff');
+      if (ff != null && ff != '') {
+        ffamily.value = ff;
+        fff();
+      }
+      var wrap = getParam('wrap');
+      if (wrap == '1') {
+        wrape.checked = true;
+        wrapef();
+      }
+    }
     count();
     textarea.addEventListener('input', count, false);
     textarea.addEventListener('click', count, false);
