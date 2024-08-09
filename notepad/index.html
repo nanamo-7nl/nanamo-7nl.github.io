@@ -152,7 +152,7 @@
       if (fv.checked == false) alls.push('sfutl=0');
       if (ffamily.value != '') alls.push('ff=' + ffamily.value);
       if (wrape.checked == true) alls.push('wrap=1');
-      if (alls.length != 0) dgEBI('query').innerHTML = window.location.origin + window.l.pathname + '?' + alls.join('&');
+      if (alls.length != 0) dgEBI('query').innerHTML = window.location.origin + window.location.pathname + '?' + alls.join('&');
     }
     dgEBI('genur').addEventListener('click', queryGen);
     rs.addEventListener('click', function () {
