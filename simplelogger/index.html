@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="content-language" content="ja">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+  <title>簡易ろがー</title>
+  <style type="text/css">
+    #txtbx-wid{
+      width: 2.5em;
+      max-width: 90%;
+    }
+    .tcenter{
+      text-align: center;
+    }
+    textarea{
+        width: 100%;
+    }
+    td,th{
+      border: 1px black solid;
+    }
+    .txtscal{
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <center>
+    <h1>簡易ろがー</h1>
+    </center>
+    <hr>
+    <button id="clbtn" type="button">リセット</button>
+    　開く：<input id="opfile" type="file">
+    <button type="button" id="savebtn">保存</button>
+    <center>
+    <textarea id="texa" wrap="no" rows="20"></textarea>
+    <br>
+    <table>
+      <tbody id="tbd">
+        <tr>
+          <th class="tcenter">
+            記録
+          </th>
+          <th>
+            内容(ﾃｷｽﾄﾎﾞｯｸｽ幅:<input type="number" id="txtbx-wid">)
+          </th>
+          <th class="tcenter">
+            削除
+          </th>
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" id="addbtn">新規</button>
+  </center>
+  <script src="script.js"></script>
+</body>
