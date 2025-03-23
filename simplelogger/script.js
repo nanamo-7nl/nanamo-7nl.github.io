@@ -19,7 +19,7 @@ var objURL = {};
 objURL.uri = undefined;
 objURL.existence = false;
 var nts = [];
-var cTSize = 50;
+var cTSize = 0;
 txtbxwid.value = cTSize;
 var fReader = new FileReader();
 
@@ -39,8 +39,16 @@ function addToLog(gn) {
 
 function chboxwid(){
   cTSize = txtbxwid.value;
-  for (n in nts){
-    dgEBI('lt'+nts[n]).size = cTSize;
+  if (cTSize == '0' || cTSize == ''){
+    for (n in nts){
+      dgEBI('lt'+nts[n]).removeAttribute('size');
+      dgEBI('lt'+nts[n]).setAttribute('class','fillauto');
+    }
+  } else {
+    for (n in nts){
+      dgEBI('lt'+nts[n]).removeAttribute('class');
+      dgEBI('lt'+nts[n]).setAttribute('size',cTSize);
+    }
   }
 }
 
@@ -99,7 +107,7 @@ function addF(){
   var tdA = dcEsA('td', [['class', 'tcenter']]);
   tdA.appendChild(logbtn);
 
-  var logtxt = dcEsA('input', [['id', 'lt'+gNum], ['type', 'text'], ['size', cTSize]]);
+  var logtxt = dcEsA('input', [['id', 'lt'+gNum], ['type', 'text']]);
   var tdB = document.createElement('td');
   tdB.appendChild(logtxt);
 
@@ -115,6 +123,7 @@ function addF(){
   tbd.appendChild(tr);
   logbtn.addEventListener('click', function () { addToLog(gNum) });
   delbtn.addEventListener('click', function () { delF(gNum) });
+  chboxwid();
 }
 
 addbtn.addEventListener('click', addF);
