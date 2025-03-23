@@ -6,21 +6,34 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
   <title>簡易ろがー</title>
   <style type="text/css">
-    #txtbx-wid{
-      width: 2.5em;
+    #txtbx-wid {
+      width: 3em;
       max-width: 90%;
     }
-    .tcenter{
+
+    .tcenter {
       text-align: center;
+      text-wrap-mode: nowrap;
     }
-    textarea{
-        width: 100%;
+
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: monospace;
     }
-    td,th{
+
+    td,
+    th {
       border: 1px black solid;
     }
-    .txtscal{
+
+    .txtscal {
       font-size: 16px;
+    }
+
+    .fillauto {
+      width: 100%;
+      box-sizing: border-box;
     }
   </style>
 </head>
@@ -28,21 +41,21 @@
 <body>
   <center>
     <h1>簡易ろがー</h1>
-    </center>
-    <hr>
-    <button id="clbtn" type="button">リセット</button>
-    　開く：<input id="opfile" type="file">
-    <button type="button" id="savebtn">保存</button>
-    <center>
+  </center>
+  <hr>
+  <button id="clbtn" type="button">リセット</button>　
+  <button type="button" id="savebtn">保存</button>　
+  <span style="text-wrap:nowrap">開く：<input id="opfile" type="file"></span>
+  <center>
     <textarea id="texa" wrap="no" rows="20"></textarea>
     <br>
-    <table>
-      <tbody id="tbd">
-        <tr>
+    <table class="fillauto">
+      <tbody id="tbd" class="fillauto">
+        <tr class="fillauto">
           <th class="tcenter">
             記録
           </th>
-          <th>
+          <th class="fillauto">
             内容(ﾃｷｽﾄﾎﾞｯｸｽ幅:<input type="number" id="txtbx-wid">)
           </th>
           <th class="tcenter">
