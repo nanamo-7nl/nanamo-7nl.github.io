@@ -222,7 +222,7 @@
         <tr>
           <td id="cell1t">日</td>
           <td id="cell2t">曜日</td>
-          <td id="cell3t" colspan="2"><input type="checkbox" id="alch" onchange="chal()">行　　事　　予　　定　</td>
+          <td id="cell3t" colspan="2"><!--<input type="checkbox" id="alch" onchange="chal()">-->行　　事　　予　　定　</td>
           <td id="cell4t">時　間　割</td>
         </tr>
       </tbody>
@@ -265,7 +265,6 @@
     </table><br><br>
     <textarea id="logarea" cols="70" rows="5" wrap="off"></textarea>
   </center>
-  <label><input type="checkbox" id="logReverse" />ログの追加方向を反転する</label>
   <script type="text/javascript">
     var table = document.getElementById('table');
     var tbody = document.getElementById('tbody');
@@ -523,8 +522,8 @@
         schinput.setAttribute('id', c);
 
         todotd.appendChild(select);
-        //todotd.appendChild(brbutton);
-        todotd.appendChild(tgltsksize);
+        todotd.appendChild(brbutton);
+        //todotd.appendChild(tgltsksize);
         todotd.appendChild(todoinput);
         schtd.appendChild(schinput);
         tr.appendChild(daytd);
@@ -600,8 +599,8 @@
       var alot = [lot.getFullYear(), String(lot.getMonth() + 1).padStart(2, '0'), String(lot.getDate()).padStart(2, '0'), String(lot.getHours()).padStart(2, '0'), String(lot.getMinutes()).padStart(2, '0'), String(lot.getSeconds()).padStart(2, '0')];
       var timestamp = '> ' + alot[0] + '/' + alot[1] + '/' + alot[2] + ' ' + alot[3] + ':' + alot[4] + ':' + alot[5] + '  ';
       var lv = logarea.value + '\n' + timestamp + addText;
-      if (logReverse.checked == true) { var lv = logarea.value.replace(replacetext9, replacetext9 + '\n' + timestamp + addText); }
       logarea.value = lv;
+      logarea.scrollTop = logarea.scrollHeight;
     }
 
     var logtext = replacetext9;

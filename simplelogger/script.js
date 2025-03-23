@@ -34,7 +34,7 @@ function addToLog(gn) {
   var timestamp = '[' + alot[0] + '/' + alot[1] + '/' + alot[2] + ' ' + alot[3] + ':' + alot[4] + ':' + alot[5] + '.' + alot[6] + '] ';
   var lv = texa.value + '\n' + timestamp + addText;
   texa.value = lv;
-  texa.scrollTop = texa.scrollHeight
+  texa.scrollTop = texa.scrollHeight;
 }
 
 function chboxwid(){
